@@ -15,6 +15,7 @@ function requestPost($fh) {
         $date = time();
     
         if(fputcsv($fh, [$_POST['name'], $_POST['comment'], $date]) === false) {
+            // @todo エラーハンドリングをもっとまじめにするよ
             echo "やばいよ！";
         }
     }
