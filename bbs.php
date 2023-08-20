@@ -1,7 +1,7 @@
 <?php
 require_once './function.php';
-$fh = openFile();
 $result = []:
+$fh = openFile();
 if($_SERVER["REQUEST_METHOD"] == "POST") {
     // validation処理
     $result = validationPost($_POST['name'], $_POST['comment']);
