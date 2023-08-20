@@ -1,7 +1,15 @@
 <?php
 require_once './function.php';
 $fh = openFile();
-requestPost($fh);
+$result = []:
+if($_SERVER["REQUEST_METHOD"] == "POST") {
+    // validation処理
+    $result = validationPost($_POST['name'], $_POST['comment']);
+    if($result['name'] && $result['comment']) {
+        // 保存処理
+        requestPost($fh);
+    }
+}
 $bbs = getBbs($fh);
 closeFile($fh);
 ?>
