@@ -39,6 +39,7 @@ function requestPost($fh) {
 
 function getBbs($fh) {
     $bbsArray = [];
+    rewind($fh);
     while (($buffer = fgetcsv($fh, 4096)) !== false) {
         $bbsArray[] = [
             'name' => $buffer[0],
