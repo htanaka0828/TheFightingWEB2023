@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once './function.php';
 $result = [
     'name' => true,
@@ -39,7 +38,7 @@ closeFile($fh);
         <form action="/bbs.php" method="POST">
             <div>
                 <label for="name">
-                    名前: <input type="text" id="name" name="name" value="" />
+                    名前: <input type="text" id="name" name="name" value="<?php echo $_SESSION['login']; ?>" />
                 </label>
                 <?php if($result['name'] === false): ?>
                     <p class="error-text">入力出来るのは英数のみ3文字以上32文字以下です</p>

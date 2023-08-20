@@ -2,6 +2,7 @@
 
 define('COMMENT_FILE', './bbs/comment.txt');
 define('ACCOUNT_FILE', './bbs/account.csv');
+session_start();
 
 function checkLogin($id, $password) {
 

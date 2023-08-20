@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once './function.php';
 
 // POSTをされたかどうか
@@ -13,8 +12,5 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     // 一致した場合には、ログイン状態にする
     $_SESSION['login'] = $_POST['id'];
   }
-  // @todo login処理が終わった後リダイレクトをしたいです
-
-} else {
-  // @todo ここどうする？
 }
+header('Location: /bbs.php');
