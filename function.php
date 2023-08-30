@@ -19,7 +19,7 @@ function checkLogin($id, $password) {
 function existsAccount($accounts, $id, $password) {
     // 配列データをloopして、一致する情報があるかを判定する
     foreach($accounts as $account) {
-        if($account['id'] === $id && $account['pass'] === $password) {
+        if($account['id'] === $id && password_verify($password, $account['pass'])) {
             return true;
         }
     }
