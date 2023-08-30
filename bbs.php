@@ -25,6 +25,9 @@ closeFile($fh);
 .error-text {
     color: red;
 }
+.logout-wrap {
+    text-align: right;
+}
 </style>
 <body>
     <h1>BBS</h1>
@@ -35,6 +38,7 @@ closeFile($fh);
     </div>
 
     <?php if($_SESSION['login']): ?>
+        <div class="logout-wrap"><a href="/logout.php">ログアウトする！</a></div>
         <form action="/bbs.php" method="POST">
             <div>
                 <label for="name">
