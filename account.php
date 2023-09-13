@@ -8,7 +8,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     $result['id'] = checkDeplicateAccount($_POST['id']);
     if($result['id']) {
         // 保存処理
-        saveAccount($_POST['id'], $_POST['password']);
+        saveAccount($_POST['id'], $_POST['password'], !empty($_POST['is_admin']));
         header('Location: /bbs.php');
     }
 }
@@ -40,6 +40,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         <div>
             <label for="password">
                 Password: <input type="password" id="password" name="password" value="" />
+            </label>
+        </div>
+        <div>
+            <label for="is_admin">
+                isAdmin: <input type="checkbox" id="is_admin" name="is_admin" />
             </label>
         </div>
         <input type="submit" value="作成！">

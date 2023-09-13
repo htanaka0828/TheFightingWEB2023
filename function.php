@@ -48,10 +48,10 @@ function existsAccountId($accounts, $id) {
     return true;
 }
 
-function saveAccount($id, $password) {
+function saveAccount($id, $password, $isAdmin) {
     // account.csvを開く
     $fh = openFile(ACCOUNT_FILE);
-    if(fputcsv($fh, [$id, password_hash($password, PASSWORD_BCRYPT)]) === false) {
+    if(fputcsv($fh, [$id, password_hash($password, PASSWORD_BCRYPT), $isAdmin ? 1 : 0]) === false) {
         // @todo エラーハンドリングをもっとまじめにするよ
         echo "やばいよ！";
     }
