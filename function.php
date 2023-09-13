@@ -1,19 +1,38 @@
 <?php
-
 define('COMMENT_FILE', './bbs/comment.txt');
 define('ACCOUNT_FILE', './bbs/account.csv');
 session_start();
 
+function getAccountWithFile() {
+        // account.csvを開く
+        $fh = openFile(ACCOUNT_FILE);
+
+        // fileの中身を全て取得して配列にする
+        $accounts = getAccounts($fh);
+        closeFile($fh);
+
+        return $accounts;
+}
+
 function checkLogin($id, $password) {
-
-    // account.csvを開く
-    $fh = openFile(ACCOUNT_FILE);
-
-    // fileの中身を全て取得して配列にする
-    $accounts = getAccounts($fh);
-    closeFile($fh);
-
+    $accounts = getAccountWithFile();
     return existsAccount($accounts, $id, $password);
+}
+
+function findAccount($id) {
+    $accounts = getAccountWithFile();
+    foreach($accounts as $account) {
+        if($account['id'] === $id) {
+            return $account;
+        }
+    }
+
+    return null;
+}
+
+function checkDeplicateAccount($id) {
+    $accounts = getAccountWithFile();
+    return existsAccountId($accounts, $id);
 }
 
 function existsAccount($accounts, $id, $password) {
@@ -26,6 +45,28 @@ function existsAccount($accounts, $id, $password) {
 
     // 失敗ならfalse
     return false;
+}
+
+function existsAccountId($accounts, $id) {
+    // 配列データをloopして、一致する情報があるかを判定する
+    foreach($accounts as $account) {
+        if($account['id'] === $id) {
+            return false;
+        }
+    }
+
+    // 重複が無い場合にtrue
+    return true;
+}
+
+function saveAccount($id, $password, $isAdmin) {
+    // account.csvを開く
+    $fh = openFile(ACCOUNT_FILE);
+    if(fputcsv($fh, [$id, password_hash($password, PASSWORD_BCRYPT), $isAdmin ? 1 : 0]) === false) {
+        // @todo エラーハンドリングをもっとまじめにするよ
+        echo "やばいよ！";
+    }
+
 }
 
 function openFile($fileName) {
@@ -74,7 +115,8 @@ function getAccounts($fh) {
     while (($buffer = fgetcsv($fh, 4096)) !== false) {
         $accountArray[] = [
             'id' => $buffer[0],
-            'pass' => $buffer[1]
+            'pass' => $buffer[1],
+            'isAdmin' => $buffer[2]
         ];
     }
     return $accountArray;
