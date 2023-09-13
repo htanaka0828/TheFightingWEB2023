@@ -19,6 +19,17 @@ function checkLogin($id, $password) {
     return existsAccount($accounts, $id, $password);
 }
 
+function findAccount($id) {
+    $accounts = getAccountWithFile();
+    foreach($accounts as $account) {
+        if($account['id'] === $id) {
+            return $account;
+        }
+    }
+
+    return null;
+}
+
 function checkDeplicateAccount($id) {
     $accounts = getAccountWithFile();
     return existsAccountId($accounts, $id);
@@ -104,7 +115,8 @@ function getAccounts($fh) {
     while (($buffer = fgetcsv($fh, 4096)) !== false) {
         $accountArray[] = [
             'id' => $buffer[0],
-            'pass' => $buffer[1]
+            'pass' => $buffer[1],
+            'isAdmin' => $buffer[2]
         ];
     }
     return $accountArray;
