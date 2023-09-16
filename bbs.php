@@ -37,12 +37,12 @@ closeFile($fh);
         </p>
     </div>
 
-    <?php if($_SESSION['login']): ?>
+    <?php if($_SESSION['account']): ?>
         <div class="logout-wrap"><a href="/logout.php">ログアウトする！</a></div>
         <form action="/bbs.php" method="POST">
             <div>
                 <label for="name">
-                    名前: <input type="text" id="name" name="name" value="<?php echo $_SESSION['login']; ?>" />
+                    名前: <input type="text" id="name" name="name" value="<?php echo $_SESSION['account']['name']; ?>" />
                 </label>
                 <?php if($result['name'] === false): ?>
                     <p class="error-text">入力出来るのは英数のみ3文字以上32文字以下です</p>
@@ -61,8 +61,8 @@ closeFile($fh);
     <?php else: ?>
         <form action="/login.php" method="POST">
             <div>
-                <label for="id">
-                    ID: <input type="text" id="id" name="id" value="" />
+                <label for="name">
+                    ID: <input type="text" id="name" name="name" value="" />
                 </label>
             </div>
             <div>
@@ -84,7 +84,7 @@ foreach($bbs as $item):
         <p>nama: <?php echo $item['name']; ?></p>
         <p>comment: <?php echo str_replace(PHP_EOL, '<br>', $item['comment']); ?></p>
         <p>date time: <?php echo date('Y/m/d H:i:s', $item['date']); ?></p>
-        <?php if($_SESSION['isAdmin']): ?>
+        <?php if($_SESSION['account']['admin_flag'] === 1): ?>
             <form action="delete.php" method="POST">
                 <input type="submit" value="削除する">
                 <input type="hidden" name="bbs_id" value="<?php echo $item['id']; ?>">

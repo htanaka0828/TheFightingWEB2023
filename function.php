@@ -1,34 +1,17 @@
 <?php
 define('COMMENT_FILE', './bbs/comment.txt');
-define('ACCOUNT_FILE', './bbs/account.csv');
 define('BBS_ID_FILE', './bbs/bbd_id.txt');
 session_start();
 
-function getAccountWithFile() {
-        // account.csvを開く
-        $fh = openFile(ACCOUNT_FILE);
-
-        // fileの中身を全て取得して配列にする
-        $accounts = getAccounts($fh);
-        closeFile($fh);
-
-        return $accounts;
+function checkLogin($pdo, $id, $password) {
+    $account = findAccountByName($pdo, $id);
+    return !empty($account) && password_verify($password, $account['password']) ? $account : false;
 }
 
-function checkLogin($id, $password) {
-    $accounts = getAccountWithFile();
-    return existsAccount($accounts, $id, $password);
-}
-
-function findAccount($id) {
-    $accounts = getAccountWithFile();
-    foreach($accounts as $account) {
-        if($account['id'] === $id) {
-            return $account;
-        }
-    }
-
-    return null;
+function findAccountByName($pdo, $id) {
+    $sth = $pdo->prepare("SELECT * FROM accounts WHERE `name` = ?");
+    $sth->execute([$id]);
+    return $sth->fetch();
 }
 
 function checkDeplicateAccount($pdo, $name) {
