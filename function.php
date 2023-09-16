@@ -31,9 +31,11 @@ function findAccount($id) {
     return null;
 }
 
-function checkDeplicateAccount($id) {
-    $accounts = getAccountWithFile();
-    return existsAccountId($accounts, $id);
+function checkDeplicateAccount($pdo, $name) {
+    $sth = $pdo->prepare("SELECT * FROM accounts WHERE `name` = ?");
+    $sth->execute([$name]);
+    $result = $sth->fetchAll();
+    return count($result) === 0;
 }
 
 function existsAccount($accounts, $id, $password) {
@@ -48,26 +50,9 @@ function existsAccount($accounts, $id, $password) {
     return false;
 }
 
-function existsAccountId($accounts, $id) {
-    // 配列データをloopして、一致する情報があるかを判定する
-    foreach($accounts as $account) {
-        if($account['id'] === $id) {
-            return false;
-        }
-    }
-
-    // 重複が無い場合にtrue
-    return true;
-}
-
-function saveAccount($id, $password, $isAdmin) {
-    // account.csvを開く
-    $fh = openFile(ACCOUNT_FILE);
-    if(fputcsv($fh, [$id, password_hash($password, PASSWORD_BCRYPT), $isAdmin ? 1 : 0]) === false) {
-        // @todo エラーハンドリングをもっとまじめにするよ
-        echo "やばいよ！";
-    }
-
+function saveAccount($pdo, $name, $password, $isAdmin) {
+    $sth = $pdo->prepare("INSERT INTO `accounts` (`name`, `password`, admin_flag) VALUE(?, ?, ?)");
+    return $sth->execute([$name, password_hash($password, PASSWORD_BCRYPT), $isAdmin ? 1 : 0]);
 }
 
 function openFile($fileName, $mode = 'a+') {
@@ -178,4 +163,10 @@ function setLastId() {
     $fh = openFile(BBS_ID_FILE, 'w');
     fwrite($fh, $id);
     closeFile($fh);
+}
+
+function dbConnect() {
+    $pdo = new PDO("mysql:host=mysql;dbname=bbs", 'root', 'root');
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    return $pdo;
 }

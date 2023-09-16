@@ -1,14 +1,15 @@
 <?php
 require_once './function.php';
 $result = [
-    'id' => true
+    'name' => true
 ];
 if($_SERVER["REQUEST_METHOD"] == "POST") {
+    $pdo = dbConnect();
     // validation処理
-    $result['id'] = checkDeplicateAccount($_POST['id']);
-    if($result['id']) {
+    $result['name'] = checkDeplicateAccount($pdo, $_POST['name']);
+    if($result['name']) {
         // 保存処理
-        saveAccount($_POST['id'], $_POST['password'], !empty($_POST['is_admin']));
+        saveAccount($pdo, $_POST['name'], $_POST['password'], !empty($_POST['is_admin']));
         header('Location: /bbs.php');
     }
 }
@@ -30,8 +31,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
     <form action="/account.php" method="POST">
         <div>
-            <label for="id">
-                ID: <input type="text" id="id" name="id" value="" />
+            <label for="name">
+                ID: <input type="text" id="name" name="name" value="" />
             </label>
             <?php if($result['id'] === false): ?>
                 <p class="error-text">重複したidが既に存在しています</p>
