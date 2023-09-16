@@ -1,2 +1,2 @@
-bbs/comment.txt
-bbs/account.csv
+bbs/*.txt
+bbs/*.csv

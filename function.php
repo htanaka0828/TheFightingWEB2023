@@ -1,6 +1,7 @@
 <?php
 define('COMMENT_FILE', './bbs/comment.txt');
 define('ACCOUNT_FILE', './bbs/account.csv');
+define('BBS_ID_FILE', './bbs/bbd_id.txt');
 session_start();
 
 function getAccountWithFile() {
@@ -69,12 +70,12 @@ function saveAccount($id, $password, $isAdmin) {
 
 }
 
-function openFile($fileName) {
+function openFile($fileName, $mode = 'a+') {
     if(!file_exists($fileName)) {
         touch($fileName);
         chmod($fileName, 0777);
     }
-    return fopen($fileName, 'a+');
+    return fopen($fileName, $mode);
 }
 
 function closeFile($fh) {
@@ -103,9 +104,11 @@ function validationPost($name, $comment) {
 function requestPost($fh) {
     $date = time();
 
-    if(fputcsv($fh, [$_POST['name'], $_POST['comment'], $date]) === false) {
+    if(fputcsv($fh, [getBbsNextId(), $_POST['name'], $_POST['comment'], $date]) === false) {
         // @todo エラーハンドリングをもっとまじめにするよ
         echo "やばいよ！";
+    } else {
+        setLastId();
     }
 }
 
@@ -122,16 +125,57 @@ function getAccounts($fh) {
     return $accountArray;
 }
 
-
 function getBbs($fh) {
     $bbsArray = [];
     rewind($fh);
     while (($buffer = fgetcsv($fh, 4096)) !== false) {
         $bbsArray[] = [
-            'name' => $buffer[0],
-            'comment' => $buffer[1],
-            'date' => $buffer[2]
+            'id' => $buffer[0],
+            'name' => $buffer[1],
+            'comment' => $buffer[2],
+            'date' => $buffer[3]
         ];
     }
     return $bbsArray;
+}
+
+function deleteBbs($id) {
+    $fh = openFile(COMMENT_FILE);
+    $bbs = getBbs($fh);
+    closeFile($fh);
+
+    $fh = openFile(COMMENT_FILE, 'w');
+    foreach($bbs as $record) {
+        if($record['id'] != $id) {
+            if(fputcsv($fh, [$record['id'], $record['name'], $record['comment'], $record['date']]) === false) {
+                // @todo エラーハンドリングをもっとまじめにするよ
+                echo "やばいよ！";
+            }
+        }
+    }
+    closeFile($fh);
+}
+
+function getBbsLastId() {
+        // account.csvを開く
+        $fh = openFile(BBS_ID_FILE);
+
+        // fileの中身を全て取得して配列にする
+        $id = fgets($fh);
+        closeFile($fh);
+
+        return (int)$id;
+}
+
+function getBbsNextId() {
+    $id = getBbsLastId();
+    return $id + 1;
+}
+
+function setLastId() {
+    $id = getBbsNextId();
+
+    $fh = openFile(BBS_ID_FILE, 'w');
+    fwrite($fh, $id);
+    closeFile($fh);
 }

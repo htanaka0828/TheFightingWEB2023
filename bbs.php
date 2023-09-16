@@ -84,6 +84,12 @@ foreach($bbs as $item):
         <p>nama: <?php echo $item['name']; ?></p>
         <p>comment: <?php echo str_replace(PHP_EOL, '<br>', $item['comment']); ?></p>
         <p>date time: <?php echo date('Y/m/d H:i:s', $item['date']); ?></p>
+        <?php if($_SESSION['isAdmin']): ?>
+            <form action="delete.php" method="POST">
+                <input type="submit" value="削除する">
+                <input type="hidden" name="bbs_id" value="<?php echo $item['id']; ?>">
+            </form>
+        <?php endif; ?>
     </div>
     <hr />
 <?php
