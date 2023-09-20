@@ -5,12 +5,13 @@ $result = [
     'comment' => true
 ];
 $fh = openFile(COMMENT_FILE);
+$pdo = dbConnect();
 if($_SERVER["REQUEST_METHOD"] == "POST") {
     // validation処理
-    $result = validationPost($_POST['name'], $_POST['comment']);
-    if($result['name'] && $result['comment']) {
+    $result = validationPost($_POST['comment']);
+    if($result['comment']) {
         // 保存処理
-        requestPost($fh);
+        requestPost($pdo);
     }
 }
 $bbs = getBbs($fh);
@@ -42,11 +43,8 @@ closeFile($fh);
         <form action="/bbs.php" method="POST">
             <div>
                 <label for="name">
-                    名前: <input type="text" id="name" name="name" value="<?php echo $_SESSION['account']['name']; ?>" />
+                    名前: <input type="text" id="name" name="name" value="<?php echo $_SESSION['account']['name']; ?>" disabled />
                 </label>
-                <?php if($result['name'] === false): ?>
-                    <p class="error-text">入力出来るのは英数のみ3文字以上32文字以下です</p>
-                <?php endif; ?>
             </div>
             <div>
                 <label for="comment">

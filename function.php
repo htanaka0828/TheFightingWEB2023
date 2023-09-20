@@ -1,6 +1,5 @@
 <?php
 define('COMMENT_FILE', './bbs/comment.txt');
-define('BBS_ID_FILE', './bbs/bbd_id.txt');
 session_start();
 
 function checkLogin($pdo, $id, $password) {
@@ -50,16 +49,10 @@ function closeFile($fh) {
     fclose($fh);
 }
 
-function validationPost($name, $comment) {
+function validationPost($comment) {
     $result = [
-        'name' => true,
         'comment' => true
     ];
-
-    // name -> アルファベット(大文字/小文字)と数字のみ / 32文字までに制限 / 3文字以上
-    if(preg_match('/[A-Za-z0-9]{3,32}/', $name) !== 1) {
-        $result['name'] = false;
-    }
 
     // comment -> 1024文字(2のn乗です) / 許容する文字に制限は設けない
     if(mb_strlen($comment) > 1024) {
@@ -69,15 +62,9 @@ function validationPost($name, $comment) {
     return $result;
 }
 
-function requestPost($fh) {
-    $date = time();
-
-    if(fputcsv($fh, [getBbsNextId(), $_POST['name'], $_POST['comment'], $date]) === false) {
-        // @todo エラーハンドリングをもっとまじめにするよ
-        echo "やばいよ！";
-    } else {
-        setLastId();
-    }
+function requestPost($pdo) {
+    $sth = $pdo->prepare("INSERT INTO `comments` (`account_id`, `comment`) VALUE(?, ?)");
+    return $sth->execute([$_SESSION['account']['id'], $_POST['comment']]);
 }
 
 function getAccounts($fh) {
@@ -108,6 +95,7 @@ function getBbs($fh) {
 }
 
 function deleteBbs($id) {
+    // @todo これもDBに依存させるよ
     $fh = openFile(COMMENT_FILE);
     $bbs = getBbs($fh);
     closeFile($fh);
@@ -121,30 +109,6 @@ function deleteBbs($id) {
             }
         }
     }
-    closeFile($fh);
-}
-
-function getBbsLastId() {
-        // account.csvを開く
-        $fh = openFile(BBS_ID_FILE);
-
-        // fileの中身を全て取得して配列にする
-        $id = fgets($fh);
-        closeFile($fh);
-
-        return (int)$id;
-}
-
-function getBbsNextId() {
-    $id = getBbsLastId();
-    return $id + 1;
-}
-
-function setLastId() {
-    $id = getBbsNextId();
-
-    $fh = openFile(BBS_ID_FILE, 'w');
-    fwrite($fh, $id);
     closeFile($fh);
 }
 
