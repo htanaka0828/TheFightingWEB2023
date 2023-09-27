@@ -14,8 +14,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         requestPost($pdo);
     }
 }
-$bbs = getBbs($fh);
-closeFile($fh);
+$bbs = getBbs($pdo);
 ?>
 <!DOCTYPE html>
 <html>
@@ -81,7 +80,7 @@ foreach($bbs as $item):
     <div>
         <p>nama: <?php echo $item['name']; ?></p>
         <p>comment: <?php echo str_replace(PHP_EOL, '<br>', $item['comment']); ?></p>
-        <p>date time: <?php echo date('Y/m/d H:i:s', $item['date']); ?></p>
+        <p>date time: <?php echo $item['create_date']; ?></p>
         <?php if($_SESSION['account']['admin_flag'] === 1): ?>
             <form action="delete.php" method="POST">
                 <input type="submit" value="削除する">

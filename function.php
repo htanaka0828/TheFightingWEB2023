@@ -67,31 +67,10 @@ function requestPost($pdo) {
     return $sth->execute([$_SESSION['account']['id'], $_POST['comment']]);
 }
 
-function getAccounts($fh) {
-    $accountArray = [];
-    rewind($fh);
-    while (($buffer = fgetcsv($fh, 4096)) !== false) {
-        $accountArray[] = [
-            'id' => $buffer[0],
-            'pass' => $buffer[1],
-            'isAdmin' => $buffer[2]
-        ];
-    }
-    return $accountArray;
-}
-
-function getBbs($fh) {
-    $bbsArray = [];
-    rewind($fh);
-    while (($buffer = fgetcsv($fh, 4096)) !== false) {
-        $bbsArray[] = [
-            'id' => $buffer[0],
-            'name' => $buffer[1],
-            'comment' => $buffer[2],
-            'date' => $buffer[3]
-        ];
-    }
-    return $bbsArray;
+function getBbs($pdo) {
+    $sth = $pdo->prepare("SELECT `comment`, `create_date`, `name` FROM comments JOIN accounts ON comments.account_id = accounts.id;");
+    $sth->execute();
+    return $sth->fetchAll();
 }
 
 function deleteBbs($id) {
