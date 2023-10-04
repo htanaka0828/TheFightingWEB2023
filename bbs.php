@@ -4,7 +4,6 @@ $result = [
     'name' => true,
     'comment' => true
 ];
-$fh = openFile(COMMENT_FILE);
 $pdo = dbConnect();
 if($_SERVER["REQUEST_METHOD"] == "POST") {
     // validation処理
