@@ -1,2 +1,4 @@
 bbs/*.txt
 bbs/*.csv
+docker/phpmyadmin/sessions/*
+!docker/phpmyadmin/sessions/.empty
