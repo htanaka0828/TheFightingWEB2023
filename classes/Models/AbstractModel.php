@@ -43,11 +43,11 @@ class AbstractModel
         $valsStr = '';
         $valsArr = [];
         foreach ($vals as $key => $val) {
-            // @todo valueの型によってシングルクォートで囲うかどうかを判定する
-            $valsStr .= "`" . $key . "` = '?', ";
+            $valsStr .= "`" . $key . "` = ? ";
             $valsArr[] = $val;
         }
-        $sth = $this->getPdo()->prepare("UPDATE " . $this->table_name . " SET " . $valsStr . " WHERE `id` = " .$id);
+        $SQL = "UPDATE " . $this->table_name . " SET " . $valsStr . " WHERE `id` = " .$id;
+        $sth = $this->getPdo()->prepare($SQL);
         return $sth->execute($valsArr);
     }
 

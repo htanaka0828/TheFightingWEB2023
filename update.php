@@ -1,16 +1,28 @@
 <?php
 require_once './function.php';
+
+require_once './classes/Models/CommentsModel.php';
+
+$CommentsModel = new CommentsModel();
+$comment = $CommentsModel->findByCol($_GET['bbs_id']);
+
+if($_SESSION['account']['id'] !== $comment['account_id']) {
+    header('Location: /bbs.php');
+    exit;
+}
+
 $result = [
     'name' => true,
     'comment' => true
 ];
-$pdo = dbConnect();
 if($_SERVER["REQUEST_METHOD"] == "POST") {
     // validation処理
     $result = validationPost($_POST['comment']);
     if($result['comment']) {
         // 更新処理
-        // requestPost($pdo);
+        $CommentsModel->update($_GET['bbs_id'], ['comment' => $_POST['comment']]);
+        header('Location: /bbs.php');
+        exit;
     }
 }
 ?>
@@ -35,7 +47,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <?php if($_SESSION['account']): ?>
         <div class="logout-wrap"><a href="/logout.php">ログアウトする！</a></div>
-        <form action="/update.php" method="POST">
+        <form action="/update.php?bbs_id=<?php echo $_GET['bbs_id']; ?>" method="POST">
             <div>
                 <label for="name">
                     名前: <input type="text" id="name" name="name" value="<?php echo $_SESSION['account']['name']; ?>" disabled />
@@ -43,7 +55,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             <div>
                 <label for="comment">
-                    コメント:<textarea id="comment" name="comment" value="<?php /* 何かしらの値 */ ?>"></textarea>
+                    コメント:<textarea id="comment" name="comment" ><?php echo $comment['comment'] ?></textarea>
                 </label>
                 <?php if($result['comment'] === false): ?>
                     <p class="error-text">入力は1024文字までです</p>

@@ -86,9 +86,10 @@ foreach($bbs as $item):
                 <input type="hidden" name="bbs_id" value="<?php echo $item['id']; ?>">
             </form>
         <?php endif; ?>
-        <?php if(1 === 1): ?>
+        <?php if($_SESSION['account']['name'] === $item['name']): ?>
             <form action="update.php" method="GET">
                 <input type="submit" value="更新する">
+                <input type="hidden" name="bbs_id" value="<?php echo $item['id']; ?>">
             </form>
         <?php endif; ?>
     </div>
