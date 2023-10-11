@@ -17,23 +17,43 @@ class AbstractModel
     }
 
     public function findAll() {
-        // @todo
-        return [];
+        $sth = $this->getPdo()->prepare("SELECT * FROM " . $this->table_name);
+        $sth->execute();
+        return $sth->fetchAll();
     }
 
-    public function save() {
-        // @todo
-        return [];
+    /**
+     * @param array $cols
+     * @param array $vals
+     * @return bool
+     */
+    public function save($cols, $vals) {
+        $colCsv = implode('`, `', $cols);
+        $bindParam = implode(', ', array_fill(0, count($vals), '?'));
+        $sth = $this->getPdo()->prepare("INSERT INTO " . $this->table_name . " (`".$colCsv."`) VALUE(". $bindParam .")");
+        return $sth->execute($vals);
     }
 
-    public function update() {
-        // @todo
-        return [];
+    /**
+     * @param $id int
+     * @param $vals array
+     * @return bool
+     */
+    public function update($id, $vals) {
+        $valsStr = '';
+        $valsArr = [];
+        foreach ($vals as $key => $val) {
+            // @todo valueの型によってシングルクォートで囲うかどうかを判定する
+            $valsStr .= "`" . $key . "` = '?', ";
+            $valsArr[] = $val;
+        }
+        $sth = $this->getPdo()->prepare("UPDATE " . $this->table_name . " SET " . $valsStr . " WHERE `id` = " .$id);
+        return $sth->execute($valsArr);
     }
 
-    public function delete() {
-        // @todo
-        return [];
+    public function delete($id) {
+        $sth = $this->getPdo()->prepare("DELETE FROM " . $this->table_name . " WHERE id = ?;");
+        return $sth->execute([$id]);
     }
 
     protected function getPdo()

@@ -86,6 +86,11 @@ foreach($bbs as $item):
                 <input type="hidden" name="bbs_id" value="<?php echo $item['id']; ?>">
             </form>
         <?php endif; ?>
+        <?php if(1 === 1): ?>
+            <form action="update.php" method="GET">
+                <input type="submit" value="更新する">
+            </form>
+        <?php endif; ?>
     </div>
     <hr />
 <?php
