@@ -1,14 +1,15 @@
 <?php
 require_once './function.php';
-$result = [
-    'name' => true,
-    'comment' => true
-];
+require_once './classes/Models/CommentsModel.php';
+require_once './classes/Validations/BbsPostValidation.php';
+
+$BbsPostValidation = new BbsPostValidation();
+
 $pdo = dbConnect();
 if($_SERVER["REQUEST_METHOD"] == "POST") {
     // validation処理
-    $result = validationPost($_POST['comment']);
-    if($result['comment']) {
+    $BbsPostValidation->validate($_POST['comment']);
+    if($BbsPostValidation->getResult()['comment']) {
         // 保存処理
         requestPost($pdo);
     }
@@ -48,7 +49,7 @@ $bbs = getBbs($pdo);
                 <label for="comment">
                     コメント:<textarea id="comment" name="comment" ></textarea>
                 </label>
-                <?php if($result['comment'] === false): ?>
+                <?php if($BbsPostValidation->getResult()['comment'] === false): ?>
                     <p class="error-text">入力は1024文字までです</p>
                 <?php endif; ?>
             </div>
