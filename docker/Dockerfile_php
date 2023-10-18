@@ -17,4 +17,5 @@ COPY --from=public.ecr.aws/docker/library/composer:lts /usr/bin/composer /usr/bi
 
 WORKDIR /var/www
 
-CMD docker-php-entrypoint php-fpm
+# CMD docker-php-entrypoint php-fpm
+CMD tail -f /dev/null

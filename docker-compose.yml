@@ -24,8 +24,8 @@ services:
       context: .
       dockerfile: ./docker/Dockerfile_php
 
-    expose:
-      - 9000
+    ports:
+      - 8000:8000
 
     volumes:
       - .:/var/www/public
