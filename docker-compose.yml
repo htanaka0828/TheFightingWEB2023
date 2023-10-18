@@ -1,22 +1,5 @@
 version: '3'
 services:
-  nginx:
-    image: nginx__image
-    container_name: nginx
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile_nginx
-
-    volumes:
-      - .:/var/www/public
-
-    ports:
-      - 80:80
-
-    tty: true
-    depends_on:
-      - php
-
   php:
     image: php__image
     container_name: php
@@ -25,10 +8,10 @@ services:
       dockerfile: ./docker/Dockerfile_php
 
     ports:
-      - 8000:8000
+      - 80:9000
 
     volumes:
-      - .:/var/www/public
+      - ./bbs:/var/www/html
 
     tty: true
     depends_on:
