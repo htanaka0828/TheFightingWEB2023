@@ -1,20 +1,23 @@
 <?php
-require_once './function.php';
+session_start();
+
+require_once './classes/Models/AccountsModel.php';
 require_once './classes/Models/CommentsModel.php';
 require_once './classes/Validations/BbsPostValidation.php';
 
 $BbsPostValidation = new BbsPostValidation();
+$CommentsModel = new CommentsModel();
+$AccountsModel = new AccountsModel();
 
-$pdo = dbConnect();
 if($_SERVER["REQUEST_METHOD"] == "POST") {
     // validation処理
     $BbsPostValidation->validate($_POST['comment']);
     if($BbsPostValidation->getResult()['comment']) {
         // 保存処理
-        requestPost($pdo);
+        $CommentsModel->save(['account_id', 'comment'], [$_SESSION['account']['id'], $_POST['comment']]);
     }
 }
-$bbs = getBbs($pdo);
+$bbs = $CommentsModel->findAll();
 ?>
 <!DOCTYPE html>
 <html>

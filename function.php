@@ -24,30 +24,6 @@ function saveAccount($pdo, $name, $password, $isAdmin) {
     return $sth->execute([$name, password_hash($password, PASSWORD_BCRYPT), $isAdmin ? 1 : 0]);
 }
 
-function validationPost($comment) {
-    $result = [
-        'comment' => true
-    ];
-
-    // comment -> 1024文字(2のn乗です) / 許容する文字に制限は設けない
-    if(mb_strlen($comment) > 1024) {
-        $result['comment'] = false;
-    }
-
-    return $result;
-}
-
-function requestPost($pdo) {
-    $sth = $pdo->prepare("INSERT INTO `comments` (`account_id`, `comment`) VALUE(?, ?)");
-    return $sth->execute([$_SESSION['account']['id'], $_POST['comment']]);
-}
-
-function getBbs($pdo) {
-    $sth = $pdo->prepare("SELECT `comments`.`id`, `comment`, `create_date`, `name` FROM comments JOIN accounts ON comments.account_id = accounts.id;");
-    $sth->execute();
-    return $sth->fetchAll();
-}
-
 function deleteBbs($pdo, $id) {
     $sth = $pdo->prepare("DELETE FROM comments WHERE id = ?;");
     return $sth->execute([$id]);

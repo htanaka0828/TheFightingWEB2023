@@ -1,5 +1,5 @@
 <?php
-require_once './function.php';
+session_start();
 
 require_once './classes/Models/CommentsModel.php';
 require_once './classes/Validations/BbsPostValidation.php';
