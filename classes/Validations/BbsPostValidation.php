@@ -1,5 +1,5 @@
 <?php
-require_once './AbstractValidation.php';
+require_once './classes/Validations/AbstractValidation.php';
 
 class BbsPostValidation extends AbstractValidation {
 

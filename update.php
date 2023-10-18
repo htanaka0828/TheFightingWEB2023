@@ -2,23 +2,22 @@
 require_once './function.php';
 
 require_once './classes/Models/CommentsModel.php';
+require_once './classes/Validations/BbsPostValidation.php';
 
 $CommentsModel = new CommentsModel();
 $comment = $CommentsModel->findByCol($_GET['bbs_id']);
+
+$BbsPostValidation = new BbsPostValidation();
 
 if($_SESSION['account']['id'] !== $comment['account_id']) {
     header('Location: /bbs.php');
     exit;
 }
 
-$result = [
-    'name' => true,
-    'comment' => true
-];
 if($_SERVER["REQUEST_METHOD"] == "POST") {
     // validation処理
-    $result = validationPost($_POST['comment']);
-    if($result['comment']) {
+    $BbsPostValidation->validate($_POST['comment']);
+    if($BbsPostValidation->getResult()['comment']) {
         // 更新処理
         $CommentsModel->update($_GET['bbs_id'], ['comment' => $_POST['comment']]);
         header('Location: /bbs.php');
@@ -57,7 +56,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="comment">
                     コメント:<textarea id="comment" name="comment" ><?php echo $comment['comment'] ?></textarea>
                 </label>
-                <?php if($result['comment'] === false): ?>
+                <?php if($BbsPostValidation->getResult()['comment'] === false): ?>
                     <p class="error-text">入力は1024文字までです</p>
                 <?php endif; ?>
             </div>
