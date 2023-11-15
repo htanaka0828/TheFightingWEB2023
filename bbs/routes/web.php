@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\CommentsController;
+use App\Http\Controllers\AccountsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +21,10 @@ Route::get('/', function () {
 });
 
 Route::get('/comments', [CommentsController::class, 'index']);
+// loginページを表示する
+Route::get('/accounts', [AccountsController::class, 'index']);
+Route::post('/accounts', [AccountsController::class, 'login']);
+
+// accountの作成formの表示
+Route::get('/accounts/create', [AccountsController::class, 'create_form']);
+Route::post('/accounts/create', [AccountsController::class, 'create']);
