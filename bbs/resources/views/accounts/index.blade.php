@@ -9,7 +9,7 @@
     <body class="antialiased">
         <h1>ログインをするよ</h1>
         <div>
-            <form>
+            <form action="/accounts" method="POST">
                 @csrf
                 <div>
                     name: <input type="text" name="name" />

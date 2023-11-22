@@ -16,10 +16,28 @@ class AccountsController extends Controller
 
     public function login(Request $request)
     {
-        // $email = $request->input('email');
-        // $password = $request->input('password');
+        $name = $request->input('name');
+        $password = $request->input('password');
 
-        // ログイン処理
+        // バリデーション
+        $request->validate([
+            'name' => 'required',
+            'password' => 'required'
+        ]);
+
+        // nameを使ってaccountsテーブルから対象のデータを取得する
+        $AccountModel = new Account();
+        $account = $AccountModel->where('name', $name)->first();
+
+        // passwordを使って、入力されたパスワードが正しいかチェックする
+        if (empty($account) || !Hash::check($password, $account->password)) {
+            // ログイン失敗したら、ログインページにリダイレクトする
+            return redirect('/accounts');
+        }
+
+        // ログイン処理(SESSIONにログイン情報を保存する)
+        $_SESSION['account'] = $account;
+
         // ログイン成功したら、コメント一覧ページにリダイレクトする
         return redirect('/comments');
     }
