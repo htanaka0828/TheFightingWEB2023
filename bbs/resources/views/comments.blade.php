@@ -16,12 +16,41 @@
     </head>
     <body class="antialiased">
         <h1>良い感じのBBSだよ</h1>
-        @foreach ($comments as $comment)
-            <div class="comment">
-                <p>name: {{ $comment->name }}</p>
-                <p>comment: {{ $comment->comment }}</p>
-                <p>created date: {{ $comment->create_date }}</p>
+        <!-- ログインしている場合のみ入力formを出す -->
+        @if ($account)
+            <div>
+                <h2>ログアウトする？</h2>
+                <form action="/accounts/logout" method="POST">
+                    {{ csrf_field() }}
+                    <button class="btn btn-success"> 送信 </button>
+                </form>
             </div>
-        @endforeach
+
+            <div>
+                <h2>コメントを入れてね</h2>
+                <form action="/comments" method="POST">
+                    名前:<br>
+                    {{ $account->name }}
+                    <br>
+                    コメント:<br>
+                    <textarea name="comment" rows="4" cols="40"></textarea>
+                    <br>
+                    {{ csrf_field() }}
+                    <button class="btn btn-success"> 送信 </button>
+                </form>
+            </div>
+        @else
+        <a href="/accounts">ログインページへ</a>
+        @endif
+        <div>
+            <h2>コメント一覧</h2>
+            @foreach ($comments as $comment)
+                <div class="comment">
+                    <p>name: {{ $comment->name }}</p>
+                    <p>comment: {!! nl2br(e($comment->comment)) !!}</p>
+                    <p>created date: {{ $comment->create_date }}</p>
+                </div>
+            @endforeach
+        </div>
     </body>
 </html>

@@ -21,6 +21,8 @@ Route::get('/', function () {
 });
 
 Route::get('/comments', [CommentsController::class, 'index']);
+Route::post('/comments', [CommentsController::class, 'create']);
+
 // loginページを表示する
 Route::get('/accounts', [AccountsController::class, 'index']);
 Route::post('/accounts', [AccountsController::class, 'login']);
@@ -28,3 +30,5 @@ Route::post('/accounts', [AccountsController::class, 'login']);
 // accountの作成formの表示
 Route::get('/accounts/create', [AccountsController::class, 'create_form']);
 Route::post('/accounts/create', [AccountsController::class, 'create']);
+
+Route::post('/accounts/logout', [AccountsController::class, 'logout']);

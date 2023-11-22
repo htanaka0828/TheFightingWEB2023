@@ -42,6 +42,15 @@ class AccountsController extends Controller
         return redirect('/comments');
     }
 
+    public function logout()
+    {
+        // ログアウト処理(SESSIONに保存しているログイン情報を削除する)
+        unset($_SESSION['account']);
+
+        // ログアウト成功したら、コメント一覧ページにリダイレクトする
+        return redirect('/comments');
+    }
+
     public function create_form()
     {
         return view('accounts.create');
