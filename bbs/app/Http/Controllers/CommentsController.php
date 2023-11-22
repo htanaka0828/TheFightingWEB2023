@@ -12,10 +12,10 @@ class CommentsController extends Controller
     {
         $coomentAll = Comment::query()
             ->join('accounts', 'account_id', '=', 'accounts.id')
-            ->select('name', 'comment', 'comments.created_at as create_date')
+            ->select('comments.id as comment_id', 'name', 'comment', 'comments.created_at as create_date')
             ->get();
 
-        $account = isset($_SESSION['account']) ? $_SESSION['account'] : null;
+        $account = $this->getLoginAccount();
 
         return view('comments')
             ->with('comments', $coomentAll)
@@ -24,6 +24,10 @@ class CommentsController extends Controller
 
     public function create(Request $request)
     {
+        if(!$this->isLogin()) {
+            return redirect('/comments');
+        }
+
         $request->validate([
             'comment' => 'required'
         ]);
@@ -36,5 +40,36 @@ class CommentsController extends Controller
 
         // コメント一覧ページにリダイレクトする
         return redirect('/comments');
+    }
+
+    public function delete(Request $request)
+    {
+        $account = $this->getLoginAccount();
+        if($account == null || $account->admin_flag != 1) {
+            return redirect('/comments');
+        }
+
+        $request->validate([
+            'comment_id' => 'required'
+        ]);
+
+        // コメント削除処理
+        $comment = Comment::find($request->input('comment_id'));
+        if($comment) {
+            $comment->delete();
+        }
+
+        // コメント一覧ページにリダイレクトする
+        return redirect('/comments');
+    }
+
+    private function getLoginAccount()
+    {
+        return isset($_SESSION['account']) ? $_SESSION['account'] : null;
+    }
+
+    private function isLogin()
+    {
+        return $this->getLoginAccount() != null;
     }
 }

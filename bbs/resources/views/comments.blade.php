@@ -46,9 +46,17 @@
             <h2>コメント一覧</h2>
             @foreach ($comments as $comment)
                 <div class="comment">
+                    <p>id: {{ $comment->comment_id }}</p>
                     <p>name: {{ $comment->name }}</p>
                     <p>comment: {!! nl2br(e($comment->comment)) !!}</p>
                     <p>created date: {{ $comment->create_date }}</p>
+                    @if ($account && $account->admin_flag == 1)
+                        <form action="/comments/delete" method="POST">
+                            {{ csrf_field() }}
+                            <input type="hidden" name="comment_id" value="{{$comment->comment_id}}">
+                            <button class="btn btn-success"> 送信 </button>
+                        </form>
+                    @endif
                 </div>
             @endforeach
         </div>

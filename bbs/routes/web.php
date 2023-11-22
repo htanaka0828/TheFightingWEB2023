@@ -22,6 +22,7 @@ Route::get('/', function () {
 
 Route::get('/comments', [CommentsController::class, 'index']);
 Route::post('/comments', [CommentsController::class, 'create']);
+Route::post('/comments/delete', [CommentsController::class, 'delete']);
 
 // loginページを表示する
 Route::get('/accounts', [AccountsController::class, 'index']);
